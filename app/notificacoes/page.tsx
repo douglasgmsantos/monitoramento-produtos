@@ -17,7 +17,32 @@ export default function NotificationsPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
 
+  // Função para buscar notificações
+  const fetchNotifications = async () => {
+    try {
+      const auth = getAuth(app);
+      const user = auth.currentUser;
+      if (!user) return;
+
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${user.uid}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    } catch (error) {
+      console.error('Erro ao buscar notificações:', error);
+    }
+  };
+
   useEffect(() => {
+    const pollingInterval = setInterval(fetchNotifications, 60000); // 60000ms = 1 minuto
+    fetchNotifications();
+    return () => clearInterval(pollingInterval);
+  }, []);
+
+  useEffect(() => {
+
     const auth = getAuth(app)
     const unsubscribe = onAuthStateChanged(auth, (user) => {
     if (!user) {
