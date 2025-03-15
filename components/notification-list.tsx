@@ -116,7 +116,7 @@ export default function NotificationList({ itemsPerPage, currentPage }: Notifica
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <h3 className="font-medium truncate">{notification.productName}</h3>
-              <Badge variant={notification.status === "available" ? "default" : "secondary"}>
+              <Badge variant={notification.status === "Disponível" ? "default" : "secondary"}>
                 {notification.status}
               </Badge>
             </div>

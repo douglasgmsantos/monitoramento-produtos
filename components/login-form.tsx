@@ -30,19 +30,21 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-
+    
     try {
       const auth = getAuth(app)
       await signInWithEmailAndPassword(auth, formData.email, formData.password)
 
+      
       toast({
         title: "Login realizado com sucesso",
         description: "Você será redirecionado para a página de notificações",
       })
       
-      router.push("/notificacoes")
+      await router.replace("/notificacoes")
+      console.log("Navigation completed")
     } catch (error: any) {
-      console.log(error)
+      console.error("#LOG", error)
       let message = "Erro ao fazer login"
       
       if (error.code.includes("auth/invalid-credential")) {

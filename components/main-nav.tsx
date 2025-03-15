@@ -20,8 +20,12 @@ export default function MainNav() {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         setUser({ name: firebaseUser.displayName })
+        // Set auth cookie when user is logged in
+        document.cookie = `auth=${firebaseUser.uid}; path=/; max-age=${60 * 60 * 24 * 7}` // 7 days
       } else {
         setUser(null)
+        // Remove auth cookie when user logs out
+        document.cookie = 'auth=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT'
       }
     })
 
@@ -36,6 +40,8 @@ export default function MainNav() {
   const handleLogout = async () => {
     try {
       await signOut(auth)
+      // Remove auth cookie
+      document.cookie = 'auth=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT'
       toast({
         title: "Logout realizado",
         description: "Você foi desconectado com sucesso",

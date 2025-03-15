@@ -19,6 +19,10 @@ export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
 
+  if (pathname === "/" || pathname === "/cadastro") {
+    return null
+  }
+
   const toggleSidebar = () => {
     setIsOpen(!isOpen)
   }

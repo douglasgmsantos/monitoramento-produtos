@@ -20,7 +20,7 @@ export default function NotificationsPage() {
   useEffect(() => {
     const auth = getAuth(app)
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
+    if (!user) {
         router.push("/")
       } else {
         setIsAuthenticated(true)
