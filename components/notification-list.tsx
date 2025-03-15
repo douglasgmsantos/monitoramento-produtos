@@ -68,7 +68,7 @@ export default function NotificationList({ itemsPerPage, currentPage }: Notifica
 
   const deleteNotification = async (id: number) => {
     try {
-      const notificationRef = ref(database, `notifications/${user.uid}/products/${id}`)
+      const notificationRef = ref(database, `notifications/${user?.uid}/products/${id}`)
       await remove(notificationRef)
       
       toast({
