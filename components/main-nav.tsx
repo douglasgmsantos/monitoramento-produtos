@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { auth } from "@/lib/firebase"
 import { onAuthStateChanged, signOut } from "firebase/auth"
+import { LogOut } from 'lucide-react'
 
 export default function MainNav() {
   const pathname = usePathname()
