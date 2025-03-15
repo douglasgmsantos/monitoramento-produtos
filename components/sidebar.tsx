@@ -13,7 +13,9 @@ import {
   PlusCircle
 } from "lucide-react"
 
-interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SidebarProps {
+  className?: string
+}
 
 export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname()

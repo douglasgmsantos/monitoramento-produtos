@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Trash2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { database } from "@/lib/firebase"
-import { getAuth, onAuthStateChanged } from "firebase/auth"
+import { getAuth } from "firebase/auth"
 import { ref, onValue, remove } from "firebase/database"
 
 interface Notification {
@@ -64,7 +64,7 @@ export default function NotificationList({ itemsPerPage, currentPage }: Notifica
       console.log("#LOG", error)
     }
 
-  }, [])
+  }, [user])
 
   const deleteNotification = async (id: number) => {
     try {

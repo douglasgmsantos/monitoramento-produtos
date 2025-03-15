@@ -3,7 +3,6 @@
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import * as React from "react"
-import { useState, useEffect } from "react"
 
 interface PaginationProps {
   totalItems: number
