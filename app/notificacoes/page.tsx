@@ -9,6 +9,11 @@ import { Pagination } from "@/components/ui/pagination"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { getDatabase, ref, onValue } from "firebase/database"
+import axios from 'axios'
+
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_URL_API
+});
 
 export default function NotificationsPage() {
   const router = useRouter()
@@ -23,13 +28,8 @@ export default function NotificationsPage() {
       const auth = getAuth(app);
       const user = auth.currentUser;
       if (!user) return;
-
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${user.uid}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      
+      await api.get(`/${user.uid}`);
     } catch (error) {
       console.error('Erro ao buscar notificações:', error);
     }
