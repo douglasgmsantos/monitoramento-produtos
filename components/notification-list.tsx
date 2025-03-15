@@ -30,6 +30,8 @@ export default function NotificationList({ itemsPerPage, currentPage }: Notifica
   const { toast } = useToast()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  type StatusType = "todos" | "Disponível" | "Não Disponível"
+  const [statusFilter, setStatusFilter] = useState<StatusType>("todos")
 
   const auth = getAuth(app)
   const user = auth.currentUser
@@ -85,10 +87,48 @@ export default function NotificationList({ itemsPerPage, currentPage }: Notifica
     }
   }
 
-  // Calcular paginação
+  // Adicionar antes do cálculo da paginação
+  const filteredNotifications = notifications.filter(notification => {
+    switch (statusFilter) {
+      case "todos":
+        return true
+      case "Disponível":
+        return notification.status === "Disponível"
+      case "Não Disponível":
+        return notification.status.toLowerCase() === "não disponível"
+      default:
+        return true
+    }
+  })
+
+  // Atualizar para usar filteredNotifications
   const startIndex = (currentPage - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
-  const paginatedNotifications = notifications.slice(startIndex, endIndex)
+  const paginatedNotifications = filteredNotifications.slice(startIndex, endIndex)
+
+  // Adicionar antes do return principal
+  const renderFilterButtons = () => (
+    <div className="flex gap-2 mb-4">
+      <Button
+        variant={statusFilter === "todos" ? "default" : "outline"}
+        onClick={() => setStatusFilter("todos")}
+      >
+        Todos
+      </Button>
+      <Button
+        variant={statusFilter === "Disponível" ? "default" : "outline"}
+        onClick={() => setStatusFilter("Disponível")}
+      >
+        Disponível
+      </Button>
+      <Button
+        variant={statusFilter === "Não Disponível" ? "default" : "outline"}
+        onClick={() => setStatusFilter("Não Disponível")}
+      >
+        Não Disponível
+      </Button>
+    </div>
+  )
 
   if (isLoading) {
     return (
@@ -107,54 +147,61 @@ export default function NotificationList({ itemsPerPage, currentPage }: Notifica
   }
 
   return (
-    <div className="space-y-4">
-      {paginatedNotifications.map((notification) => (
-        <div
-          key={notification.id}
-          className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-        >
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="font-medium truncate">{notification.productName}</h3>
-              <Badge variant={notification.status === "Disponível" ? "default" : "secondary"}>
-                {notification.status}
-              </Badge>
-            </div>
-            <div className="mt-1 text-sm text-muted-foreground">
-              <div className="flex flex-wrap gap-x-4 gap-y-1">
-                <span>Preço: R$ {notification.price.toFixed(2)}</span>
-                <span>Vendido por: {notification.soldBy}</span>
-                <span>
-                  Notificado em: {new Date(notification.createdAt).toLocaleString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </span>
+    <div>
+      {renderFilterButtons()}
+      <div className="space-y-4">
+        {paginatedNotifications.map((notification) => (
+          <div
+            key={notification.id}
+            className={`flex items-center justify-between p-4 border rounded-lg transition-colors ${
+              notification.status === "Disponível" 
+                ? "bg-[rgba(20,83,45,0.3)] hover:bg-[rgba(20,83,45,0.4)]" 
+                : "bg-[rgba(255,0,0,0.3)] hover:bg-[rgba(255,0,0,0.4)]"
+            }`}
+          >
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="font-medium truncate">{notification.productName}</h3>
+                <Badge variant={notification.status === "Disponível" ? "default" : "secondary"}>
+                  {notification.status}
+                </Badge>
+              </div>
+              <div className="mt-1 text-sm text-muted-foreground">
+                <div className="flex flex-wrap gap-x-4 gap-y-1">
+                  <span>Preço: R$ {notification.price.toFixed(2)}</span>
+                  <span>Vendido por: {notification.soldBy}</span>
+                  <span>
+                    Notificado em: {new Date(notification.createdAt).toLocaleString('pt-BR', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </span>
+                </div>
               </div>
             </div>
+            <div className="flex items-center gap-2 ml-4">
+              <Link
+                href={notification.productLink}
+                target="_blank"
+                className="text-sm font-medium text-primary hover:underline"
+              >
+                Ver produto
+              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => deleteNotification(notification.id)}
+                aria-label="Excluir notificação"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center gap-2 ml-4">
-            <Link
-              href={notification.productLink}
-              target="_blank"
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              Ver produto
-            </Link>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => deleteNotification(notification.id)}
-              aria-label="Excluir notificação"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }
