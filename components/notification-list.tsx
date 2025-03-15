@@ -14,7 +14,7 @@ import { ref, onValue, remove } from "firebase/database"
 interface Notification {
   id: number
   productName: string
-  status: "available" | "outOfStock"
+  status: "Disponível" | "Não Disponível"
   price: number
   productLink: string
   soldBy: string
