@@ -31,10 +31,11 @@ export default function NotificationList({ itemsPerPage, currentPage }: Notifica
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
+  const auth = getAuth(app)
+  const user = auth.currentUser
+
   useEffect(() => {
     try {
-      const auth = getAuth(app)
-      const user = auth.currentUser
       if (!user) {
         return
       }
@@ -67,7 +68,7 @@ export default function NotificationList({ itemsPerPage, currentPage }: Notifica
 
   const deleteNotification = async (id: number) => {
     try {
-      const notificationRef = ref(database, `notifications/${id}/products`)
+      const notificationRef = ref(database, `notifications/${user.uid}/products/${id}`)
       await remove(notificationRef)
       
       toast({
@@ -75,6 +76,7 @@ export default function NotificationList({ itemsPerPage, currentPage }: Notifica
         description: "A notificação foi removida com sucesso",
       })
     } catch (error) {
+      console.log("#LOG", error)
       toast({
         title: "Erro",
         description: "Erro ao remover a notificação",

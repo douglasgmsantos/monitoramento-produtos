@@ -5,6 +5,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import MainNav from "@/components/main-nav"
 import { Toaster } from "@/components/ui/toaster"
+import { Sidebar } from "@/components/sidebar"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -16,15 +17,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="pt-BR">
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <MainNav />
-          <main>{children}</main>
+          <Sidebar />
+          <div className="md:ml-64">
+            <MainNav />
+            <main className="p-8">
+              {children}
+            </main>
+          </div>
           <Toaster />
         </ThemeProvider>
       </body>

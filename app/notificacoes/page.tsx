@@ -48,13 +48,13 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
+    <div className="container mx-auto py-1 space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle>Notificações de Produtos</CardTitle>
-          <CardDescription>Visualize as últimas atualizações dos produtos que você está acompanhando</CardDescription>
-        </CardHeader>
-        <CardContent>
+        <CardHeader className="flex-row justify-between" >
+          <div >
+            <CardTitle>Notificações de Produtos</CardTitle>
+            <CardDescription>Visualize as últimas atualizações dos produtos que você está acompanhando</CardDescription>
+          </div>
           <div className="flex justify-end mb-4">
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Itens por página:</span>
@@ -77,8 +77,13 @@ export default function NotificationsPage() {
               </Select>
             </div>
           </div>
+        
+        </CardHeader>
+        <CardContent>
 
-          <NotificationList itemsPerPage={Number.parseInt(itemsPerPage)} currentPage={currentPage} />
+        
+          
+        <NotificationList itemsPerPage={Number.parseInt(itemsPerPage)} currentPage={currentPage} />
 
           <div className="mt-4 flex justify-center">
             <Pagination
