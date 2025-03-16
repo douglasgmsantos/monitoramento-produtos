@@ -102,12 +102,6 @@ export default function LoginForm() {
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Entrando..." : "Entrar"}
           </Button>
-          <div className="text-center text-sm">
-            Não tem uma conta?{" "}
-            <Link href="/cadastro" className="text-primary hover:underline">
-              Cadastre-se
-            </Link>
-          </div>
         </CardFooter>
       </form>
     </Card>

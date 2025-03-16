@@ -21,6 +21,7 @@ interface Product {
   soldBy: string
   createdAt: string
   maxPrice: number
+  phoneNumber: string
 }
 
 export default function ProductList() {

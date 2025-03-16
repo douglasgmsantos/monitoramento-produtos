@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
+import { doc, setDoc, getFirestore } from "firebase/firestore"
 import app from "@/lib/firebase"
 
 export default function RegisterForm() {
@@ -21,6 +22,7 @@ export default function RegisterForm() {
     email: "",
     password: "",
     confirmPassword: "",
+    phone: "",
   })
   const [isLoading, setIsLoading] = useState(false)
 
@@ -51,9 +53,18 @@ export default function RegisterForm() {
         formData.password
       )
 
-      // Atualizar o nome do usuário
       await updateProfile(userCredential.user, {
-        displayName: formData.name
+        displayName: formData.name,
+      });
+
+      // Salvar dados do usuário no Firestore
+      const db = getFirestore(app)
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        phones: [formData.phone],
+        createdAt: new Date().toISOString(),
       })
 
       toast({
@@ -94,6 +105,18 @@ export default function RegisterForm() {
               placeholder="Seu nome completo"
               required
               value={formData.name}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="phone">Telefone</Label>
+            <Input
+              id="phone"
+              name="phone"
+              type="tel"
+              placeholder="+55 (00) 00000-0000"
+              required
+              value={formData.phone}
               onChange={handleChange}
             />
           </div>

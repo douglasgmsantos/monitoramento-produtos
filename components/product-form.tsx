@@ -26,12 +26,14 @@ import {
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { getDatabase, ref, push, set, get } from "firebase/database"
+import { getFirestore, doc, getDoc } from 'firebase/firestore'
 
 const formSchema = z.object({
   name: z.string().min(3, "O nome deve ter pelo menos 3 caracteres"),
   url: z.string().url("URL inválida"),
   soldBy: z.enum(["Amazon"]),
   maxPrice: z.coerce.number().min(1, "O preço máximo é obrigatório"),
+  phoneNumber: z.string().min(1, "O telefone é obrigatório"),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -53,8 +55,10 @@ export default function ProductForm({ productId }: ProductFormProps) {
       url: "",
       soldBy: "Amazon",
       maxPrice: 0,
+      phoneNumber: "",
     },
   })
+  const [phones, setPhones] = useState<string[]>([])
 
   useEffect(() => {
     if (productId && user) {
@@ -70,6 +74,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
             url: productData.url,
             soldBy: productData.soldBy,
             maxPrice: productData.maxPrice,
+            phoneNumber: productData.phoneNumber,
           })
         }
       }
@@ -77,6 +82,33 @@ export default function ProductForm({ productId }: ProductFormProps) {
       loadProduct()
     }
   }, [productId, user, form])
+
+  useEffect(() => {
+    const fetchUserPhones = async () => {
+      if (!user) return;
+      
+      const firestore = getFirestore(app);
+      const userDoc = doc(firestore, 'users', user.uid);
+      
+      try {
+        const docSnap = await getDoc(userDoc);
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          if (userData.phones && Array.isArray(userData.phones)) {
+            setPhones(userData.phones);
+            // Set the first phone number as default if available
+            if (userData.phones.length > 0) {
+              form.setValue('phoneNumber', userData.phones.join(', '));
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao buscar telefones:', error);
+      }
+    };
+
+    fetchUserPhones();
+  }, [user, form]);
 
   async function onSubmit(data: FormValues) {
     if (!user) return
@@ -185,6 +217,43 @@ export default function ProductForm({ productId }: ProductFormProps) {
                     {...field}
                     onChange={(e) => field.onChange(e.target.valueAsNumber)}
                   />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="phoneNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Telefone</FormLabel>
+                <FormControl>
+                  <Input
+                    type="tel"
+                    {...field}
+                    disabled={true}
+                    value={field.value}
+                  />
+                  {/* <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    disabled={true}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o telefone" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {phones.map((phone) => (
+                        <SelectItem key={phone} value={phone}>
+                          {phone}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select> */}
                 </FormControl>
                 <FormMessage />
               </FormItem>
