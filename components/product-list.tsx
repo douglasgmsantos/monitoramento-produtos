@@ -121,7 +121,10 @@ export default function ProductList() {
                   </TableCell>
                   <TableCell>
                     {product.maxPrice ? 
-                      product.maxPrice : 
+                      new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                      }).format(product.maxPrice) : 
                       'Sem preço máximo'}
                   </TableCell>
                   <TableCell>

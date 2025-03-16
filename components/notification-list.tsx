@@ -30,8 +30,6 @@ export default function NotificationList({ itemsPerPage, currentPage }: Notifica
   const { toast } = useToast()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  type StatusType = "todos" | "Disponível" | "Não Disponível"
-  const [statusFilter, setStatusFilter] = useState<StatusType>("todos")
 
   const auth = getAuth(app)
   const user = auth.currentUser
@@ -87,48 +85,11 @@ export default function NotificationList({ itemsPerPage, currentPage }: Notifica
     }
   }
 
-  // Adicionar antes do cálculo da paginação
-  const filteredNotifications = notifications.filter(notification => {
-    switch (statusFilter) {
-      case "todos":
-        return true
-      case "Disponível":
-        return notification.status === "Disponível"
-      case "Não Disponível":
-        return notification.status.toLowerCase() === "não disponível"
-      default:
-        return true
-    }
-  })
-
   // Atualizar para usar filteredNotifications
   const startIndex = (currentPage - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
-  const paginatedNotifications = filteredNotifications.slice(startIndex, endIndex)
+  const paginatedNotifications = notifications.slice(startIndex, endIndex)
 
-  // Adicionar antes do return principal
-  const renderFilterButtons = () => (
-    <div className="flex gap-2 mb-4">
-      <Button
-        variant={statusFilter === "todos" ? "default" : "outline"}
-        onClick={() => setStatusFilter("todos")}
-      >
-        Todos
-      </Button>
-      <Button
-        variant={statusFilter === "Disponível" ? "default" : "outline"}
-        onClick={() => setStatusFilter("Disponível")}
-      >
-        Disponível
-      </Button>
-      <Button
-        variant={statusFilter === "Não Disponível" ? "default" : "outline"}
-        onClick={() => setStatusFilter("Não Disponível")}
-      >
-        Não Disponível
-      </Button>
-    </div>
-  )
 
   if (isLoading) {
     return (
@@ -148,9 +109,8 @@ export default function NotificationList({ itemsPerPage, currentPage }: Notifica
 
   return (
     <div>
-      {renderFilterButtons()}
       <div className="space-y-4">
-        {paginatedNotifications.map((notification) => (
+        { paginatedNotifications.map((notification) => (
           <div
             key={notification.id}
             className={`flex items-center justify-between p-4 border rounded-lg transition-colors ${
