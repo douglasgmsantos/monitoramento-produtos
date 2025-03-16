@@ -20,7 +20,7 @@ interface Product {
   url: string
   soldBy: string
   createdAt: string
-  expirationDate: string
+  maxPrice: number
 }
 
 export default function ProductList() {
@@ -97,7 +97,7 @@ export default function ProductList() {
                 <TableHead>Link</TableHead>
                 <TableHead>Vendedor</TableHead>
                 <TableHead>Data de Cadastro</TableHead>
-                <TableHead>Data de Vencimento</TableHead>
+                <TableHead>Preço Máximo</TableHead>
                 <TableHead>Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -120,9 +120,9 @@ export default function ProductList() {
                     {new Date(product.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
-                    {product.expirationDate ? 
-                      new Date(product.expirationDate).toLocaleDateString() : 
-                      'Sem data de vencimento'}
+                    {product.maxPrice ? 
+                      product.maxPrice : 
+                      'Sem preço máximo'}
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">

@@ -31,7 +31,7 @@ const formSchema = z.object({
   name: z.string().min(3, "O nome deve ter pelo menos 3 caracteres"),
   url: z.string().url("URL inválida"),
   soldBy: z.enum(["Amazon"]),
-  expirationDate: z.string().min(1, "A data de vencimento é obrigatória"),
+  maxPrice: z.coerce.number().min(1, "O preço máximo é obrigatório"),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -52,7 +52,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
       name: "",
       url: "",
       soldBy: "Amazon",
-      expirationDate: "",
+      maxPrice: 0,
     },
   })
 
@@ -69,7 +69,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
             name: productData.name,
             url: productData.url,
             soldBy: productData.soldBy,
-            expirationDate: productData.expirationDate,
+            maxPrice: productData.maxPrice,
           })
         }
       }
@@ -175,12 +175,16 @@ export default function ProductForm({ productId }: ProductFormProps) {
 
           <FormField
             control={form.control}
-            name="expirationDate"
+            name="maxPrice"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Data de Vencimento</FormLabel>
+                <FormLabel>Preço Máximo</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <Input
+                    type="number"
+                    {...field}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
